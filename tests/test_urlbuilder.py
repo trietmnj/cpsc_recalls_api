@@ -2,7 +2,7 @@ import sys
 sys.path.append("src/")
 import pytest
 
-from url_builder import URLBuilder
+from urlbuilder import URLBuilder
 import exceptions
 
 def test_add_recall_title():

@@ -1,8 +1,9 @@
 import exceptions
+from userinterface import UserInterface
 
 
 class URLBuilder:
-    """Builds json-based query url using a fluent interface"""
+    """Builds json-based query url"""
     BASE_URL = "https://www.saferproducts.gov/RestWebServices/Recall?format=json"
     AVAILABLE_ARG_NAMES = [
         "RecallID",
@@ -31,9 +32,18 @@ class URLBuilder:
         "Hazard",
         "Remedy",
         "RemedyOption"
-    ]Returns string url
-    __arg_list = dict()
+    ]
+    __arg_list = None
     url = ""
+
+    def set_args_dict(self, args_list: dict):
+        self.__arg_list = args_list
+        if self.__arg_list is not None:
+            for key in self.__arg_list.keys():
+                if key not in self.AVAILABLE_ARG_NAMES:
+                    raise exceptions.InvalidRestApiKeyValuePair(
+                        f"{key} is not an acceptable argument key")
+        return self
 
     def add_recall_title(self, recall_title: str):
         self.__add_url_arg("RecallTitle", recall_title)
@@ -45,7 +55,9 @@ class URLBuilder:
 
     def build(self) -> None:
         """Builds url"""
-        self.url = self.BASE_URL if len(self.__arg_list.keys()) == 0 \
+        # list validation
+
+        self.url = self.BASE_URL if self.__arg_list is None \
             else (self.BASE_URL + "&" + "&".join([key+"="+value for key, value in self.__arg_list.items()]))
 
     def get_url(self) -> str:
