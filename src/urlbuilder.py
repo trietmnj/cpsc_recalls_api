@@ -33,16 +33,13 @@ class URLBuilder:
         "Remedy",
         "RemedyOption"
     ]
-    __arg_list = None
+    __arg_list = dict()
     url = ""
 
     def set_args_dict(self, args_list: dict):
-        self.__arg_list = args_list
-        if self.__arg_list is not None:
-            for key in self.__arg_list.keys():
-                if key not in self.AVAILABLE_ARG_NAMES:
-                    raise exceptions.InvalidRestApiKeyValuePair(
-                        f"{key} is not an acceptable argument key")
+        if args_list is not None:
+            for key, value in args_list.items():
+                self.add_arg(key, value)
         return self
 
     def add_recall_title(self, recall_title: str):
@@ -50,13 +47,12 @@ class URLBuilder:
         return self
 
     def add_arg(self, arg_name: str, arg_param: str):
+        """Add key/value pair"""
         self.__add_url_arg(arg_name, arg_param)
         return self
 
     def build(self) -> None:
         """Builds url"""
-        # list validation
-
         self.url = self.BASE_URL if self.__arg_list is None \
             else (self.BASE_URL + "&" + "&".join([key+"="+value for key, value in self.__arg_list.items()]))
 
@@ -67,6 +63,7 @@ class URLBuilder:
     def __add_url_arg(self, arg_name: str, arg_param: str) -> None:
         """Argument validation"""
         if arg_name not in self.AVAILABLE_ARG_NAMES:
-            raise exceptions.InvalidRestApiArgumentNameError
+            raise exceptions.InvalidRestApiArgumentKeyError(
+                f"{arg_name} is not an acceptable argument key. Available keys: {self.AVAILABLE_ARG_NAMES}")
         else:
             self.__arg_list[arg_name] = arg_param

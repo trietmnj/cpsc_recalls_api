@@ -1,5 +1,5 @@
 
-class InvalidRestApiArgumentNameError(Exception):
+class InvalidRestApiArgumentKeyError(Exception):
     pass
 
 
